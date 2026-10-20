@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#071116" />
+    <meta
+      name="description"
+      content="孤岛 ISLA — 程序化实时海岛：六层 Gerstner 海浪、平面反射、程序化棕榈、灯塔与动态天气。"
+    />
+    <title>孤岛 ISLA — A Procedural Island Study</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1d22'/%3E%3Cpath d='M10 42c8-6 14-6 22 0s14 6 22 0' stroke='%239ad3cf' stroke-width='4' fill='none' stroke-linecap='round'/%3E%3Ccircle cx='44' cy='21' r='7' fill='%23eac48d'/%3E%3C/svg%3E" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <canvas id="scene" aria-label="可交互的实时三维海岛场景"></canvas>
+
+    <main id="hud">
+      <header class="masthead">
+        <div class="eyebrow">
+          <span class="live-dot"></span>
+          <span>REAL-TIME SIMULATION</span>
+          <span class="slash">/</span>
+          <span>THREE.JS</span>
+        </div>
+        <h1>
+          <span class="han">孤岛</span>
+          <span class="en">ISLA</span>
+        </h1>
+        <p class="sub">北纬 21°18′ · 太平洋上的一日</p>
+      </header>
+
+      <aside class="weather-panel" aria-label="天气">
+        <p class="panel-label">天气 <span>WEATHER</span></p>
+        <div class="weather-group" role="group" aria-label="切换天气">
+          <button type="button" class="weather-btn is-active" data-weather="clear" aria-pressed="true">
+            <span class="num">01</span>
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                <circle cx="12" cy="12" r="4.2" />
+                <path d="M12 2.2v3M12 18.8v3M2.2 12h3M18.8 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1" />
+              </svg>
+            </span>
+            <span class="name">晴天</span>
+          </button>
+          <button type="button" class="weather-btn" data-weather="storm" aria-pressed="false">
+            <span class="num">02</span>
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                <path d="M6.5 15.5a4 4 0 0 1 .4-7.98A5.5 5.5 0 0 1 17.6 9.2a3.3 3.3 0 0 1-.6 6.3" />
+                <path d="M8 18l-1.2 3M12.6 18l-1.2 3M17.2 18l-1.2 3" />
+              </svg>
+            </span>
+            <span class="name">暴雨</span>
+          </button>
+          <button type="button" class="weather-btn" data-weather="night" aria-pressed="false">
+            <span class="num">03</span>
+            <span class="icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+                <path d="M20 14.2A8.2 8.2 0 0 1 9.8 4a8.4 8.4 0 1 0 10.2 10.2Z" />
+              </svg>
+            </span>
+            <span class="name">夜晚</span>
+          </button>
+        </div>
+      </aside>
+
+      <section class="time-panel" aria-label="时间">
+        <div class="time-head">
+          <div class="clock-wrap">
+            <span id="clock">09:36</span>
+            <small>LOCAL TIME</small>
+          </div>
+          <button type="button" id="autoBtn" class="auto-btn is-on" aria-pressed="true">
+            <span class="auto-led" aria-hidden="true"></span>
+            <span>自动流转</span>
+          </button>
+        </div>
+        <div class="slider-wrap">
+          <input
+            id="timeSlider"
+            type="range"
+            min="0"
+            max="24"
+            step="0.01"
+            value="9.6"
+            aria-label="时间，0 到 24 时"
+          />
+          <div class="ticks" aria-hidden="true">
+            <span>00</span><span>06</span><span>12</span><span>18</span><span>24</span>
+          </div>
+        </div>
+        <div class="time-foot">
+          <span id="daypart">上午 · MORNING</span>
+          <span>GOLDEN HOUR</span>
+        </div>
+      </section>
+
+      <div class="side-coord" aria-hidden="true">
+        <span>21° 18′ N</span>
+        <i></i>
+        <span>157° 52′ W</span>
+      </div>
+
+      <div class="bottom-right">
+        <div class="perf-pill" aria-live="off">
+          <span id="fps">60</span><small>FPS</small>
+          <b></b>
+          <span id="qualityLabel">反射 1/2</span>
+        </div>
+        <div class="hint-bar">
+          <span><i class="mouse"></i>左键拖拽旋转</span>
+          <span>滚轮缩放</span>
+          <span>右键平移</span>
+          <span class="keys"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> 切天气</span>
+        </div>
+      </div>
+
+      <div class="credit">PROCEDURAL ISLAND STUDY <span>·</span> NO EXTERNAL ASSETS</div>
+    </main>
+
+    <div id="intro" class="loading">
+      <div class="loading-inner">
+        <p class="loading-eyebrow">THREE.JS STUDY — 001</p>
+        <h2><span>孤岛</span><em>ISLA</em></h2>
+        <p class="loading-copy">正在生成地形、海面与风</p>
+        <div class="loading-bar"><i></i></div>
+        <p class="loading-meta">PROCEDURAL ISLAND <span>·</span> GERSTNER OCEAN <span>·</span> REAL-TIME</p>
+      </div>
+    </div>
+
+    <noscript>此场景需要启用 JavaScript。</noscript>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
