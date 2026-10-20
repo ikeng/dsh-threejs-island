@@ -15,6 +15,15 @@ npm run build && npm run preview
 
 要求 Node 20.19+（本项目在 Node 22 + Vite 8 上验证）。
 
+### 无依赖单文件版
+
+仓库根目录的 **`island.html`** 已把 Three.js、CSS 与全部逻辑内联为一个文件，约 0.95 MB：
+
+- 不需要 Node、`node_modules`、本地服务器或网络
+- 直接双击 `island.html`，或拖进浏览器即可运行
+- 如需重新生成：`npm run build:single`
+- 验证方式：在完全独立的 `/tmp` 目录下用 `file://` 打开，确认无任何外部请求、无控制台报错，晴/雨/夜三态与帧率均正常。
+
 ## 操作
 
 - **左键拖拽** 旋转，**滚轮** 缩放，**右键拖拽** 平移
@@ -37,6 +46,8 @@ npm run build && npm run preview
 ## 结构
 
 ```
+island.html           单文件离线版（约 0.95 MB，内联 Three.js + CSS + 逻辑）
+scripts/build-singlefile.mjs  生成 island.html 的构建脚本
 index.html            HUD、天气/时间控件、入场动画
 src/main.js           渲染器、相机、逐帧编排、自适应画质、键盘/指针交互
 src/postfx.js         HDR 后处理链
