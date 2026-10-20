@@ -492,7 +492,9 @@ export function createWeather(scene, camera) {
     const baseFog = 0.0018 + 0.0004 * nightFactor; // clear: 0.0018 day / 0.0022 night
     const fogDensity = lerp(baseFog, 0.0065, stormMix);
 
-    const baseCover = lerp(0.35, 0.30, nightFactor);
+    // Clear weather should read as genuinely clear: only a few small
+    // fair-weather cumulus remain, and almost no cirrus veil.
+    const baseCover = lerp(0.085, 0.10, nightFactor);
     const cloudCover = lerp(baseCover, 0.95, stormMix);
 
     const baseCloudSpeed = lerp(1.0, 0.85, nightFactor);

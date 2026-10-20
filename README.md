@@ -31,7 +31,7 @@ npm run build && npm run preview
 | `src/island.js` | 320² 顶点色地形：水下沙床 / 湿沙 / 干沙 / 草甸 / 岩石 / AO，逐顶点粗糙度与湿沙反天光 shader；礁石与断崖碎岩实例化。 |
 | `src/vegetation.js` | 沿曲线放样的弯曲棕榈树干、逐片生成的羽叶与椰果；分层顶点着色器风摆；恰好 13,000 丛 GPU 风吹草；上千丛山坡灌木与野花。 |
 | `src/structures.js` | 程序化 CanvasTexture 红白条纹灯塔、灯笼室、旋转体积光柱、灯室点光；23 块岸礁/海蚀柱、浮木、椰子、13 只海鸟。 |
-| `src/sky.js` + `src/weather.js` | 自定义大气渐变、太阳/月亮、星空与银河、FBM 云层；三态天气平滑过渡；14,000 条 GPU 雨线、闪电与雷暴照明；浪高、风、雾浓度联动。 |
+| `src/sky.js` + `src/weather.js` | 自定义大气渐变、太阳/月亮、星空与银河、FBM 云层。晴天云量降到约 8%，太阳高亮盘面与光晕更突出（默认相机背对太阳，转动视角或把时间调到傍晚即可看到）；三态天气平滑过渡；14,000 条 GPU 雨线、闪电与雷暴照明；浪高、风、雾浓度联动。 |
 | `src/postfx.js` | ACES + Bloom + 线性调色 + SMAA + 暗角 / 颗粒 / 径向色散；帧率低于 38 时自动逐级降低像素比与反射分辨率。 |
 
 ## 结构
@@ -60,6 +60,8 @@ src/weather.js        天气过渡、雨、闪电、雾
 
 | 晴天 | 暴雨 |
 | --- | --- |
-| ![晴天](preview/01-clear-day.png) | ![暴雨](preview/02-storm.png) |
-| **夜晚** | **日落** |
-| ![夜晚](preview/03-night.png) | ![日落](preview/04-sunset.png) |
+| ![晴天](preview/01-clear-day.png) | ![晴天 · 面向太阳](preview/05-sun.png) |
+| **暴雨** | **夜晚** |
+| ![暴雨](preview/02-storm.png) | ![夜晚](preview/03-night.png) |
+
+![日落](preview/04-sunset.png)

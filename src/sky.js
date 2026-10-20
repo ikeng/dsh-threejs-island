@@ -165,9 +165,11 @@ void main() {
 
   // ---- sun disc + halo -----------------------------------------------------
   float sunAng = acos(clamp(dot(dir, uSunDir), -1.0, 1.0));
-  float sunCore = 1.0 - smoothstep(0.0060, 0.0110, sunAng);
-  float sunHalo = exp(-sunAng * 48.0) * 0.50 + exp(-sunAng * 420.0) * 1.4;
-  col += uSunColor * (sunCore * 16.0 + sunHalo) * uSunDisc;
+  float sunCore = 1.0 - smoothstep(0.0070, 0.0130, sunAng);
+  float sunHalo = exp(-sunAng * 34.0) * 0.85
+                + exp(-sunAng * 160.0) * 2.4
+                + exp(-sunAng * 900.0) * 3.2;
+  col += uSunColor * (sunCore * 26.0 + sunHalo) * uSunDisc;
 
   // ---- moon disc (simple phase terminator) + glow --------------------------
   float moonAng = acos(clamp(dot(dir, uMoonDir), -1.0, 1.0));
@@ -200,13 +202,13 @@ void main() {
   float detail = fbm4(cuv * 2.6 + vec2(13.7, -8.1));
   float cl = base * 0.80 + detail * 0.20;
 
-  float th = mix(0.62, 0.08, uCloudCover);
+  float th = mix(0.78, 0.04, uCloudCover);
   float softness = mix(0.22, 0.46, uStorm);
   float cloud = smoothstep(th, th + softness, cl);
 
   // Thin high cirrus wisps, mostly a fair-weather feature.
   float cirrus = fbm4(cuv * 0.33 + vec2(4.2, 9.3) + drift * 0.35);
-  float wisp = smoothstep(0.52, 0.80, cirrus) * (0.26 - 0.16 * uStorm);
+  float wisp = smoothstep(0.56, 0.84, cirrus) * (0.11 - 0.07 * uStorm);
 
   float cloudA = clamp(cloud * 1.1 + wisp * (1.0 - cloud), 0.0, 1.0);
   cloudA *= smoothstep(-0.01, 0.10, up);
@@ -239,7 +241,7 @@ void main() {
 
   // ---- horizon haze (must match scene.fog) ---------------------------------
   float hazeBand = 1.0 - smoothstep(-0.02, 0.12, up);
-  col = mix(col, uFogColor, hazeBand * 0.68);
+  col = mix(col, uFogColor, hazeBand * 0.46);
 
   float below = 1.0 - smoothstep(-0.10, 0.0, up);
   vec3 belowCol = mix(uFogColor, uGroundColor, 1.0 - smoothstep(-0.35, -0.02, up));
@@ -258,12 +260,12 @@ void main() {
 // ---------------------------------------------------------------------------
 
 const PALETTE = {
-  zenithDay: new THREE.Color('#15488c'),
+  zenithDay: new THREE.Color('#0c4694'),
   zenithDusk: new THREE.Color('#2a3358'),
   zenithNight: new THREE.Color('#070d1a'),
   zenithStorm: new THREE.Color('#3a454d'),
 
-  horizonDay: new THREE.Color('#b7d4df'),
+  horizonDay: new THREE.Color('#a9cadd'),
   horizonDusk: new THREE.Color('#ff9a5e'),
   horizonNight: new THREE.Color('#101c30'),
   horizonStorm: new THREE.Color('#8a969d'),
@@ -522,7 +524,7 @@ export function createSky(scene) {
     // ------------------------------------------------------------------
     const sunVisible = smoothstep01(sunElev, -0.035, 0.02);
     const sunHeight = smoothstep01(sunElev, 0.0, 0.40);
-    const baseSun = sunVisible * (0.45 + 0.55 * sunHeight) * 2.9 * (1 - 0.82 * storm);
+    const baseSun = sunVisible * (0.45 + 0.55 * sunHeight) * 3.25 * (1 - 0.82 * storm);
     const flash = lightning;
 
     const sunIntensity = baseSun + flash * 1.35 * (1 - nightFactor * 0.6);
@@ -532,7 +534,7 @@ export function createSky(scene) {
       nightFactor * moonVisible * 0.82 * (1 - 0.72 * storm) + flash * 0.35;
 
     const hemiIntensity =
-      (0.10 + 0.50 * dayFactor + 0.22 * twilightFactor + 0.09 * nightFactor) *
+      (0.09 + 0.40 * dayFactor + 0.22 * twilightFactor + 0.09 * nightFactor) *
         (1 - 0.45 * storm) +
       flash * 1.6;
     const ambientIntensity = 0.03 + 0.04 * dayFactor + 0.025 * nightFactor + flash * 0.40;
